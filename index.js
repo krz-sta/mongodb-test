@@ -19,13 +19,34 @@ async function start() {
         const db = client.db('testDB');
         userCollection = db.collection('users');
 
-        app.get('/', (req, res) => {
+        app.get('/', (res) => {
             res.send('API working.');
+        });
+
+        app.post('/users', async (req, res) => {
+            try {
+                const { name, age } = req.body;
+
+                if (!name || age == null) {
+                    return res.status(400).json({
+                        error: 'Name and age are required.'
+                    });
+                }
+
+                const result = await userCollection.insertOne({ name, age });
+
+                res.status(201).json({
+                    message: 'User added successfully.',
+                    insertedId: result.insertedId
+                });
+            } catch (err) {
+                res.status(500).json({ error: err.message});
+            }
         });
 
         app.listen(port, () => {
             console.log(`Server listening on: http://localhost:${port}`);
-        })
+        });
     } catch (err) {
         console.error('Error starting app: ', err);
     }
