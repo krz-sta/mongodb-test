@@ -53,6 +53,22 @@ async function start() {
             }
         });
 
+        app.get('/users/:id', async (req, res) => {
+            try{
+                const user = await userCollection.findOne({
+                    _id: new ObjectId(req.params.id)
+                });
+
+                if (!user) {
+                    res.status(404).json({ error: 'User not found.' });
+                }
+
+                res.json(user);
+            } catch (err) {
+                res.status(500).json({ error: err.message });
+            }
+        });
+
         app.listen(port, () => {
             console.log(`Server listening on: http://localhost:${port}`);
         });
