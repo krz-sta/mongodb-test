@@ -85,6 +85,25 @@ async function start() {
             }
         });
 
+        app.put('/users/:id', async (req, res) => {
+            try {
+                const { name, age } = req.body;
+
+                const result = userCollection.updateOne(
+                    { _id: new ObjectId(req.params.id) },
+                    { $set: { name, age }}
+                );
+
+                if (result.matchedCount === 0) {
+                    res.status(404).json({ error: 'User not found.' });
+                }
+
+                res.json({ message: 'User updated.'});
+            } catch (err) {
+                res.status(500).json({ error: err.message });
+            }
+        });
+
         app.listen(port, () => {
             console.log(`Server listening on: http://localhost:${port}`);
         });
