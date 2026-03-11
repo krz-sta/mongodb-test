@@ -19,7 +19,7 @@ async function start() {
         const db = client.db('testDB');
         userCollection = db.collection('users');
 
-        app.get('/', (res) => {
+        app.get('/', (req, res) => {
             res.send('API working.');
         });
 
@@ -41,6 +41,15 @@ async function start() {
                 });
             } catch (err) {
                 res.status(500).json({ error: err.message});
+            }
+        });
+
+        app.get('/users', async (req, res) => {
+            try {
+                const users = await userCollection.find().toArray();
+                res.json(users);
+            } catch (err) {
+                res.status(500).json({ error: err.message });
             }
         });
 
