@@ -69,6 +69,22 @@ async function start() {
             }
         });
 
+        app.delete('/users/:id', async (req, res) => {
+            try {
+                const result = userCollection.deleteOne({
+                    _id: new ObjectId(req.params.id)
+                });
+
+                if (result.deletedCount === 0) {
+                    res.status(404).json({ error: 'User not found.' });
+                } 
+
+                res.json({ message: 'User deleted.'});
+            } catch (err) {
+                res.status(500).json({ error: err.message });
+            }
+        });
+
         app.listen(port, () => {
             console.log(`Server listening on: http://localhost:${port}`);
         });
